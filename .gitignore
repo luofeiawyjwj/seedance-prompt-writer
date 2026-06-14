@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+__pycache__/
+.claude.local.md
+CLAUDE.local.md
+.env
+.env.*
