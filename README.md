@@ -1,0 +1,195 @@
+# Seedance Prompt Writer
+
+一个面向 Seedance 2.0 / Seedance 2.0 Fast 的视频提示词写作 skill。它帮助 AI agent 把粗略想法、参考图、参考视频、音频节奏、广告脚本、短剧桥段、视频续写和视频编辑需求，改写成更适合直接粘贴使用的中文成品提示词。
+
+## 适合做什么
+
+- 文生视频：把一句灵感扩展成完整镜头提示词
+- 图生视频：锁定人物、产品、构图、服装、场景和颜色
+- 多参考素材：给每张图、每段视频、每段音频分配明确作用
+- 视频续写：承接第一帧或最后一帧，保持动作和镜头连续
+- 视频编辑：添加、移除、替换或修改已有视频中的元素
+- 产品广告：突出卖点、材质、logo、包装和最终展示画面
+- 中文短剧：构建冲突钩子、台词、反应镜头和情绪爆点
+- 音乐/节奏同步：让画面动作、转场、文字和重拍对应
+- 提示词诊断：找出主体、动作、镜头、参考素材和约束中的问题
+
+## 仓库结构
+
+```text
+seedance-prompt-writer/
+├── SKILL.md
+├── agents/
+│   └── openai.yaml
+└── references/
+    ├── github-resources.md
+    └── prompt-patterns.md
+```
+
+`SKILL.md` 是 agent 的入口文件；`references/prompt-patterns.md` 存放更完整的场景模板；`references/github-resources.md` 记录可参考的公开 Seedance prompt 资源。
+
+## 安装到 Codex
+
+### Windows
+
+```powershell
+mkdir "$env:USERPROFILE\.codex\skills" -Force
+git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git "$env:USERPROFILE\.codex\skills\seedance-prompt-writer"
+```
+
+### macOS / Linux
+
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git ~/.codex/skills/seedance-prompt-writer
+```
+
+然后在 Codex 里直接说：
+
+```text
+用 seedance-prompt-writer 帮我把这个视频想法写成 Seedance 2.0 提示词：雨夜街头，一个女孩回头看向撑伞的男生，电影感，10 秒。
+```
+
+或显式触发：
+
+```text
+Use $seedance-prompt-writer 把这段想法优化成中文成品提示词：...
+```
+
+## 安装到 Claude Code
+
+Claude Code 支持 `SKILL.md` 格式的 skills。个人 skill 通常放在 `~/.claude/skills/<skill-name>/SKILL.md`，项目级 skill 通常放在项目里的 `.claude/skills/<skill-name>/SKILL.md`。
+
+### 个人全局安装
+
+```bash
+mkdir -p ~/.claude/skills
+git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git ~/.claude/skills/seedance-prompt-writer
+```
+
+在 Claude Code 中可以直接输入：
+
+```text
+/seedance-prompt-writer 帮我写一个 10 秒 9:16 的 Seedance 短剧提示词：女主在电梯里发现男主身份反转。
+```
+
+### 项目级安装
+
+```bash
+mkdir -p .claude/skills
+git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git .claude/skills/seedance-prompt-writer
+```
+
+项目级安装适合把这个 skill 跟某个内容项目、广告项目或提示词库一起提交。
+
+## 用在 Gemini CLI
+
+Gemini CLI 默认读取 `GEMINI.md`，也可以通过配置把 `AGENTS.md` 作为上下文文件。这个仓库已经提供 `GEMINI.md` 和 `AGENTS.md`，最简单的用法是把仓库作为上下文目录打开：
+
+```bash
+git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git
+cd seedance-prompt-writer
+gemini
+```
+
+然后输入：
+
+```text
+按照这个仓库里的 Seedance Prompt Writer 规则，帮我把下面想法写成成品提示词：一个透明玻璃杯里的冰块变成发光水晶，微距产品广告风格。
+```
+
+如果你想在别的项目里复用，可以把 `SKILL.md` 和 `references/` 复制过去，并在项目 `GEMINI.md` 中加入：
+
+```markdown
+Use the Seedance Prompt Writer instructions from ./seedance-prompt-writer/SKILL.md.
+Load ./seedance-prompt-writer/references/prompt-patterns.md when detailed templates are needed.
+```
+
+## 用在其他 AI / agent
+
+不支持 `SKILL.md` 自动发现的工具，也可以把它当作“可复用提示词工作流”使用：
+
+1. 把 `SKILL.md` 作为系统提示词或项目说明导入。
+2. 在需要更细模板时，再导入 `references/prompt-patterns.md`。
+3. 对 agent 说“按 Seedance Prompt Writer 的规则输出中文成品提示词”。
+4. 如果工具支持项目说明文件，优先使用 `AGENTS.md`；如果只支持单一上下文文件，把 `SKILL.md` 的内容粘贴进去。
+
+## 操作示范
+
+### 1. 粗略想法扩写
+
+输入：
+
+```text
+帮我写 Seedance 提示词：雨夜咖啡店门口，女生回头，男生撑伞，很电影。
+```
+
+输出方向：
+
+```text
+生成一段 10 秒 16:9 写实电影感短片。雨夜的街角咖啡店门口，暖黄色店内灯光透过玻璃洒到湿漉漉的人行道上，地面有清晰霓虹倒影。女生穿浅色风衣，刚推门离开咖啡店，走出两步后缓慢回头；男生站在门口外侧，撑着黑伞安静看着她，表情克制、欲言又止。镜头使用中景缓慢推近，从两人之间的雨幕推进到女生回头的侧脸特写。光线为暖室内光与冷蓝雨夜街灯对比，氛围安静、暧昧、带一点遗憾。保持两人的服装、发型和面部特征稳定，雨滴、伞面水珠、玻璃反光自然真实。结尾停在女生眼神微微颤动、男生没有开口的静默瞬间。无字幕、无水印。
+```
+
+### 2. 图生视频
+
+输入：
+
+```text
+Image 1 是一只白色香水瓶。帮我做 10 秒产品广告，保持瓶身形状和 logo，背景可以高级一点。
+```
+
+输出方向：
+
+```text
+使用 Image 1 作为产品外观参考，保持白色香水瓶的瓶身轮廓、瓶盖比例、logo 位置和材质细节准确。生成一段 10 秒 16:9 产品广告视频：香水瓶放在浅灰色石材台面上，背景是柔和散焦的高级浴室空间，水汽轻轻漂浮。镜头使用微距特写缓慢环绕，从瓶身侧面移动到正面 logo，再轻轻推近到瓶盖和玻璃反光。光线为干净柔光箱加一束细窄轮廓光，突出瓶身边缘和半透明质感。结尾产品居中，logo 清晰可读，画面保持简洁、真实、无额外文字、无水印。
+```
+
+### 3. 多参考素材分工
+
+输入：
+
+```text
+Image 1 保持人物长相，Image 2 参考赛博城市，Video 1 参考运镜。生成一个夜晚奔跑镜头。
+```
+
+输出方向：
+
+```text
+素材分工：Image 1 用于保持角色身份、脸部特征、发型和服装；Image 2 用于参考夜晚赛博城市的霓虹色彩、潮湿街道和建筑背景；Video 1 仅参考镜头运动节奏和跟拍方向，不复制其中的人物或场景。生成一段 10 秒 16:9 写实科幻短片：角色在雨后的赛博城市街道上向前奔跑，身后霓虹招牌和车辆灯光形成长条反射。镜头使用低角度手持跟拍，从角色侧后方贴近移动，跟随奔跑节奏轻微晃动，最后推到角色回头的紧张表情。保持 Image 1 的人物身份、服装和发型稳定，保持 Image 2 的冷蓝与品红霓虹氛围，动作速度和镜头节奏参考 Video 1，画面连续自然。
+```
+
+### 4. 提示词诊断和优化
+
+输入：
+
+```text
+这个提示词生成效果很乱：一个机器人在城市里飞，镜头酷一点，很多爆炸，电影大片，帮我优化。
+```
+
+输出方向：
+
+```text
+问题诊断：
+主体动作太泛，镜头指令不明确，“很多爆炸”和“酷一点”会让画面元素失控；缺少场景位置、飞行方向、光线和结尾画面。
+
+优化后提示词：
+生成一段 10 秒 16:9 写实科幻动作短片。主体是一台银灰色人形机器人，胸口有蓝色能量核心，正在未来城市高楼之间低空高速飞行。镜头使用侧后方高速跟拍，先贴近机器人肩部和推进器火焰，再跟随它穿过两栋玻璃大楼之间的狭窄空隙。远处只有 2 次受控爆炸，爆炸发生在背景建筑侧面，火光照亮玻璃幕墙但不遮挡主体。光线为夜晚城市霓虹与爆炸暖光混合，风格写实、紧张、清晰。保持机器人外形、能量核心颜色和飞行方向稳定，结尾停在机器人冲出烟雾、城市天际线展开的宽景画面。
+```
+
+## 维护建议
+
+- `SKILL.md` 保持短而清晰，只放 agent 必须知道的执行规则。
+- 详细模板放到 `references/prompt-patterns.md`，让 agent 按需读取。
+- 不要把平台价格、额度、参数上限写死；这些内容变化快，使用前应查当前平台文档。
+- 引用社区 prompt 时保留来源和许可证，不要大段复制他人的提示词库。
+- 如果增加脚本或自动化工具，先说明用途，再验证它不会读取或上传用户素材。
+
+## 参考文档
+
+- Claude Code skills 文档：https://code.claude.com/docs/en/skills
+- Claude Code memory / CLAUDE.md 文档：https://code.claude.com/docs/en/memory
+- Gemini CLI configuration 文档：https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md
+
+## License
+
+MIT
