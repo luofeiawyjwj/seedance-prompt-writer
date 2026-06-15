@@ -141,8 +141,6 @@ git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git
 请按 seedance-prompt-writer/SKILL.md 的规则，把我的想法写成 Seedance 2.0 中文成品提示词。需要详细模板时读取 seedance-prompt-writer/references/prompt-patterns.md。
 ```
 
-说明：这个仓库目前是标准 skill 仓库，不是 Claude Code 插件市场包，所以暂时不写 `/plugin marketplace add` / `/plugin install`。等以后打包成插件，再补那种安装方式。
-
 ## 示例和评测
 
 查看 10 个覆盖主要场景的操作案例：
