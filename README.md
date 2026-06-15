@@ -52,23 +52,47 @@ OpenAI Codex 当前文档推荐的 skill 路径是全局 `$HOME/.agents/skills`�
 ### Windows
 
 ```powershell
-mkdir "$env:USERPROFILE\.agents\skills" -Force
-git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git "$env:USERPROFILE\.agents\skills\seedance-prompt-writer"
+$tmp = Join-Path $env:TEMP "seedance-prompt-writer"
+$dst = Join-Path $env:USERPROFILE ".agents\skills\seedance-prompt-writer"
+Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue
+git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git $tmp
+New-Item -ItemType Directory -Force $dst | Out-Null
+Copy-Item -LiteralPath (Join-Path $tmp "SKILL.md") -Destination $dst -Force
+Copy-Item -LiteralPath (Join-Path $tmp "agents") -Destination $dst -Recurse -Force
+Copy-Item -LiteralPath (Join-Path $tmp "references") -Destination $dst -Recurse -Force
+Remove-Item -LiteralPath $tmp -Recurse -Force
 ```
 
 ### macOS / Linux
 
 ```bash
-mkdir -p ~/.agents/skills
-git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git ~/.agents/skills/seedance-prompt-writer
+tmp="$(mktemp -d)"
+dst="$HOME/.agents/skills/seedance-prompt-writer"
+git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git "$tmp"
+rm -rf "$dst"
+mkdir -p "$dst"
+cp "$tmp/SKILL.md" "$dst/"
+cp -R "$tmp/agents" "$tmp/references" "$dst/"
+rm -rf "$tmp"
 ```
 
 ### 项目级安装
 
-```bash
-mkdir -p .agents/skills
-git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git .agents/skills/seedance-prompt-writer
+```powershell
+$tmp = Join-Path $env:TEMP "seedance-prompt-writer"
+$dst = ".agents\skills\seedance-prompt-writer"
+Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue
+git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git $tmp
+New-Item -ItemType Directory -Force $dst | Out-Null
+Copy-Item -LiteralPath (Join-Path $tmp "SKILL.md") -Destination $dst -Force
+Copy-Item -LiteralPath (Join-Path $tmp "agents") -Destination $dst -Recurse -Force
+Copy-Item -LiteralPath (Join-Path $tmp "references") -Destination $dst -Recurse -Force
+Remove-Item -LiteralPath $tmp -Recurse -Force
 ```
+
+安装后的 skill 目录应该只包含 `SKILL.md`、`agents/` 和 `references/`。不要把整个仓库直接 clone 到 `skills/seedance-prompt-writer`，否则 `.git`、README、examples、evals、scripts 等开源维护文件也会被带进去。
 
 然后在 Codex 里直接说：
 
@@ -110,9 +134,17 @@ Claude Code 支持 `SKILL.md` 格式的 skills。个人 skill 通常放在 `~/.c
 
 ### 个人全局安装
 
-```bash
-mkdir -p ~/.claude/skills
-git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git ~/.claude/skills/seedance-prompt-writer
+```powershell
+$tmp = Join-Path $env:TEMP "seedance-prompt-writer"
+$dst = Join-Path $env:USERPROFILE ".claude\skills\seedance-prompt-writer"
+Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue
+git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git $tmp
+New-Item -ItemType Directory -Force $dst | Out-Null
+Copy-Item -LiteralPath (Join-Path $tmp "SKILL.md") -Destination $dst -Force
+Copy-Item -LiteralPath (Join-Path $tmp "agents") -Destination $dst -Recurse -Force
+Copy-Item -LiteralPath (Join-Path $tmp "references") -Destination $dst -Recurse -Force
+Remove-Item -LiteralPath $tmp -Recurse -Force
 ```
 
 在 Claude Code 中可以直接输入：
@@ -123,9 +155,17 @@ git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git ~/.claude/s
 
 ### 项目级安装
 
-```bash
-mkdir -p .claude/skills
-git clone https://github.com/luofeiawyjwj/seedance-prompt-writer.git .claude/skills/seedance-prompt-writer
+```powershell
+$tmp = Join-Path $env:TEMP "seedance-prompt-writer"
+$dst = ".claude\skills\seedance-prompt-writer"
+Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue
+git clone --depth 1 https://github.com/luofeiawyjwj/seedance-prompt-writer.git $tmp
+New-Item -ItemType Directory -Force $dst | Out-Null
+Copy-Item -LiteralPath (Join-Path $tmp "SKILL.md") -Destination $dst -Force
+Copy-Item -LiteralPath (Join-Path $tmp "agents") -Destination $dst -Recurse -Force
+Copy-Item -LiteralPath (Join-Path $tmp "references") -Destination $dst -Recurse -Force
+Remove-Item -LiteralPath $tmp -Recurse -Force
 ```
 
 项目级安装适合把这个 skill 跟某个内容项目、广告项目或提示词库一起提交。
